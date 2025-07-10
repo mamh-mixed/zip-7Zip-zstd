@@ -19,7 +19,7 @@ jobs:
 
     strategy:
       matrix:
-        arch: [ amd64, amd64_x86, amd64_arm, amd64_arm64 ]
+        arch: [ amd64, amd64_x86, amd64_arm64 ]
         include:
           - arch: amd64_x86
             subsys: "5.01"
@@ -27,9 +27,6 @@ jobs:
           - arch: amd64
             subsys: "5.02"
             platform: "x64"
-          - arch: amd64_arm
-            subsys: "6.02"
-            platform: "arm"
           - arch: amd64_arm64
             subsys: "6.02"
             platform: "arm64"
@@ -47,7 +44,6 @@ jobs:
       - name: Compiling ${{ matrix.arch }}
         shell: cmd
         run: |
-          set
           set WDIR=%cd%
           set PLATFORM=${{matrix.platform}}
           set SUBSYS=${{matrix.subsys}}
@@ -55,7 +51,7 @@ jobs:
           set OUTDIR=%WDIR%\build\bin-%PLATFORM%
           set LFLAGS=/SUBSYSTEM:WINDOWS,%SUBSYS%
           set ERRFILE=
-          set STOP_ON_ERROR=0
+          set STOP_ON_ERROR=1
 
           echo "********"
           echo "Working Dir: %WDIR%"
@@ -84,7 +80,7 @@ jobs:
           name: binary-${{ matrix.arch }}
 
   do-release:
-    runs-on: windows-2019
+    runs-on: windows-latest
     needs: build
     steps:
     - uses: actions/download-artifact@v4
